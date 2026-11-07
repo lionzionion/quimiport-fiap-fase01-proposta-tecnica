@@ -1,53 +1,102 @@
-# 07 — Plano de qualidade de software
+# 07 — Planejamento de qualidade de software
 
-## Objetivo
+## Estratégia de testes por nível
 
-Definir como validar as regras críticas do QuimiPort **nas próximas fases**. O enunciado da Fase 01 exige estratégia e cenários planejados; não exige backend, testes de integração ou ambiente produtivo já implementados.
-
-## Casos de uso prioritários
-
-`RegistrarCarga`, `ValidarDocumentacao`, `SolicitarInspecao`, `LiberarCarga`, `BloquearCarga`, `CancelarCarga` e `AtualizarStatus`, pois erros nesses fluxos podem permitir decisões incoerentes de segurança.
-
-## Pirâmide proposta
-
-| Nível | Foco | Estratégia |
+| Nível | Responsabilidade | Exemplo |
 |---|---|---|
-| Unitário | Entidades, VOs e funções puras | Testar entradas válidas e inválidas, sem dependência externa |
-| Aplicação | Casos de uso e orquestração | Simular repositórios, políticas e usuário |
-| Integração futura | Persistência, HTTP e transação | Banco isolado de teste; garantir gravação de carga e histórico |
-| Fluxo principal futuro | Cadastro → análise → liberação → movimentação | Verificar estados, mensagens, registros e ações bloqueadas |
-| Segurança futura | Acesso, permissões e concorrência | Tentar ações sem autorização e com versão desatualizada |
+| Unitário | Funções puras, VOs e invariantes do agregado | Zero ou `NaN` não é quantidade válida |
+| Unitário de caso de uso | Orquestração com repositório fake/mock | Produto inativo impede cadastro da carga |
+| Integração | Casos de uso + banco/transações futuros | Status e histórico salvos atomicamente |
+| Contrato/API | Entradas, saídas, erros estáveis | Documento inválido retorna erro de domínio mapeado |
+| End-to-end futuro | Fluxo completo da UI | Registrar→validar→inspecionar→liberar |
 
-## Cenários de teste prioritários
+## Prioridades de risco
 
-| Cenário | Entrada | Esperado |
+**Críticas:** liberação indevida; movimentação com bloqueio; cancelamento reativado; classificação ausente; histórico inconsistente; duplicidade de código. **Altas:** vencimento documental, identificação de responsável, concorrência de atualizações. **Médias:** filtros e consulta paginada.
+
+## Cenários planejados
+
+1. Produto sem nome ou classe de risco → erro.
+2. Produto inativo → impedir nova carga.
+3. Quantidade zero, negativa, infinita ou `NaN` → erro.
+4. Responsável técnico ausente → erro.
+5. Documento obrigatório ausente → não liberar.
+6. Documento exigido expirado → não liberar.
+7. Carga bloqueada → não movimentar.
+8. Carga cancelada → não liberar.
+9. `REGISTRADA` → `FINALIZADA` diretamente → erro.
+10. Carga elegível → liberar e gerar histórico com status anterior e novo.
+11. Duas requisições simultâneas → não perder atualização (futura integração).
+12. Evento de histórico não pode ser omitido em mudança de estado.
+
+## Mocks e dados simulados
+
+Usar `MemoryCargaRepository`, `FakeProdutoRepository`, `FakeClock` e `FakeActorIdentity`, injetados nos casos de uso. Fixtures fictícias devem incluir produto ativo, produto inativo, documentação em dia, documentos ausentes, carga bloqueada e cancelada. **Não usar registros reais de produção ou documentos sensíveis.**
+
+## Critérios de aceite e automação futura
+
+Executar `npm test` no pipeline quando houver código, bloquear merge de testes críticos falhos, medir cobertura das regras mais relevantes e manter testes por comportamento. Cobertura alta sem cenários críticos adequados não garante qualidade. A Fase 01 solicita **plano** de qualidade; testes executáveis são material complementar, não condição obrigatória.
+
+## Pirâmide de testes proposta
+
+| Nível | Alvo | Exemplos |
 |---|---|---|
-| Produto sem nome | Nome vazio | Rejeição RN01 |
-| Produto sem classe | Classe vazia | Rejeição RN02 |
-| Produto inativo | Registro de nova carga | Rejeição RN03 |
-| Produto ausente | Carga sem produto | Rejeição RN04 |
-| Quantidade zero ou negativa | 0, -10, NaN | Rejeição RN05 |
-| Responsável ausente | Carga sem técnico | Rejeição RN06 |
-| Documento exigido ausente | Liberar carga com pendência | Rejeição RN07 |
-| Documento válido e política definida | Liberar após análise | LIBERADA, se demais condições atendidas |
-| Carga bloqueada | Iniciar movimentação | Rejeição RN08 |
-| Carga cancelada | Solicitar liberação | Rejeição RN09 |
-| Carga em inspeção | Finalizar diretamente | Rejeição RN10 |
-| Transição inválida | REGISTRADA → FINALIZADA | Rejeição RN11 |
-| Bloqueio válido | Motivo e ator | Evento no histórico RN12 |
-| Bloqueio sem motivo | Motivo vazio | Rejeição RN13 |
-| Código duplicado | Mesmo código em duas cargas | Conflito RN14 |
-| Inspeção reprovada | Solicitar liberação | Rejeição RN15 |
-| Política inexistente | Solicitar liberação | Rejeição RN16 |
+| Unidade | Objetos de valor, entidades e máquina de estados | RN01–RN13; transições válidas e proibidas |
+| Aplicação | Orquestração de caso de uso, interfaces e erros | `LiberarCarga` verifica pendências e persiste evento |
+| Integração (futura) | Repositório, transações, API e persistência | Concorrência, códigos únicos, consistência de histórico |
+| E2E (futura) | Fluxo completo de usuário | Criar produto → carga → documentação → inspeção → liberação |
 
-## Mocks, fixtures e dados simulados
+## Critérios de conclusão de cada regra
 
-Criar `CargaRepositoryFake`, `ProdutoRepositoryFake`, `PoliticaDocumentalFake` e `ClockFake` para isolamento. Manter cenários em `tests/fixtures/` com códigos, produtos e responsáveis **fictícios** e datas determinísticas. Evitar dependência de serviços externos para testes unitários.
+- Caso positivo e pelo menos um negativo descritos em formato Dado / Quando / Então.
+- Resultado esperado e mensagem de rejeição definidos.
+- Regra vinculada a UC e responsável na arquitetura.
+- Mudança de estado acompanhada de histórico previsto.
+- Massa de teste fictícia identificada e sem dependência de serviço real.
 
-## Estratégia de integração futura
+## Exemplo de BDD
 
-Verificar que carga, mudança de status e evento sejam gravados de maneira atômica; testar rollback em falha e concorrência otimista com `versao`. Ao introduzir HTTP, validar contratos, erros padronizados e regras de autenticação. Em operações reais, exigir auditoria e controles adicionais.
+**Cenário:** impedir liberação sem documento obrigatório.
 
-## Critérios de aceite
+**Dado** que a carga `CQ-2026-001` está `EM_ANALISE` e o documento de demonstração `DOC-A` está ausente; **quando** um ator autorizado solicita liberação; **então** o sistema rejeita a transição, informa a pendência, mantém a carga em `EM_ANALISE` e não registra um evento de liberação bem-sucedida.
 
-As regras prioritárias são rastreáveis a cenários de teste, os estados do diagrama são coerentes com as respostas do domínio e alterações em políticas não permitem burlar a autorização. **A existência deste plano não comprova que testes de produção tenham sido executados.**
+**Cenário:** liberar carga apta.
+
+**Dado** que a carga está em análise, com política atendida e inspeção favorável quando aplicável; **quando** ocorre a decisão por ator autorizado; **então** o domínio permite `LIBERADA`, gera evento e solicita persistência conjunta.
+
+Os critérios são planejamento de testes. Se houver protótipo local, resultados executados devem ser relatados separadamente e não confundidos com cobertura real de um produto de produção.
+
+## Matriz adicional de testes para a banca
+
+| Cenário | Dado | Quando | Então | Tipo futuro |
+|---|---|---|---|---|
+| QA01 | Produto sem classificação | Cadastrar produto | Rejeitar e manter catálogo inalterado | Unidade |
+| QA02 | Produto inativo | Registrar carga | Não criar carga | Caso de uso com fake |
+| QA03 | Carga com documento ausente | Liberar | Manter EM_ANALISE e informar pendência | Domínio + aplicação |
+| QA04 | Inspeção desfavorável | Emitir parecer | Alterar para BLOQUEADA com evento | Domínio |
+| QA05 | Carga BLOQUEADA | Iniciar movimentação | Rejeitar transição | Unidade |
+| QA06 | Carga CANCELADA | Liberar | Rejeitar transição | Unidade |
+| QA07 | Carga REGISTRADA | Finalizar | Rejeitar transição | Unidade |
+| QA08 | Carga apta e em análise | Liberar | LIBERADA com evento e autor | Caso de uso + integração futura |
+| QA09 | Duas versões concorrentes | Salvar a segunda | Sinalizar conflito sem perder histórico | Integração futura |
+
+**Distinção importante:** esta é uma **estratégia planejada** exigida pela Fase 01. Não corresponde a testes executados no repositório de documentação. Os testes do aplicativo-laboratório foram executados separadamente e não equivalem a validação industrial ou portuária.
+
+
+## Um teste que conecta pesquisa, regra e caso de uso
+
+**Cenário C-001:** [pré-conferência de uma carga com documento pendente](16-estudo-de-caso.md).
+
+```gherkin
+Funcionalidade: Pré-conferência documental de carga perigosa
+  Cenário: Rejeitar tentativa de liberação com pendência
+    Dado que a carga CQ-2026-001 está EM_ANALISE
+    E que existe uma política documental P-01 configurada para o cenário
+    E que um requisito da política está pendente
+    Quando um responsável autorizado solicitar liberação
+    Então o sistema rejeita a solicitação informando a pendência
+    E a carga permanece EM_ANALISE
+    E nenhuma autorização operacional é emitida pelo QuimiPort
+```
+
+**Mock necessário:** repositório de carga, provedor da política P-01, identidade do usuário autorizado e relógio. São componentes **planejados**, não evidências de testes executados num porto. Para conferir a origem da política e o que ainda depende de especialistas, leia [Fontes e evidências](17-fontes-e-evidencias.md).

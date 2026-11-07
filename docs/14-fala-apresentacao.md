@@ -1,27 +1,15 @@
-# 14 — Texto-base para ensaio
+# 14 — Apresentação oral: use o caso C-001 como fio condutor
 
-Este roteiro é um material de estudo; deve ser explicado com palavras próprias e de acordo com a modelagem documentada.
+A gravação da Fase 01 deve demonstrar **a compreensão do problema e das escolhas técnicas**, não exibir um aplicativo pronto. Em vez de uma fala genérica, use o caso [CQ-2026-001](16-estudo-de-caso.md): uma carga fictícia chega com referência documental pendente e não pode ser liberada.
 
-## Abertura
+O roteiro principal desta versão é [Guia de vídeo — problema real e 8 minutos](../apresentacao/GUIA_VIDEO_CASO_REAL.md), que distribui o tempo e indica quais arquivos mostrar na tela.
 
-Apresento o QuimiPort, uma proposta técnica e arquitetural para gestão de cargas químicas em contexto portuário inspirado no Porto de Santos. Na Fase 01, o foco é DDD, regras, TypeScript, arquitetura e qualidade, não a entrega do sistema full stack funcionando.
+## Cinco pontos que você precisa conseguir explicar sem ler
 
-## Problema e atores
+1. O que o [Porto Sem Papel](17-fontes-e-evidencias.md) já faz e por que QuimiPort **não o substitui**.
+2. Por que a hipótese de pré-conferência é relevante, mas ainda **não foi validada em campo**.
+3. Por que `CargaQuimica` é a raiz de agregado e por que `DocumentoCarga` não decide sozinho a liberação.
+4. Por que `BLOQUEADA` não vai para `EM_MOVIMENTACAO` e o que acontece após parecer favorável de inspeção.
+5. Como RN07 vira um caso de teste verificável e em que camada a regra será protegida.
 
-O registro descentralizado dificulta verificar identificação do produto, risco, documentos, inspeções, motivo de decisões e histórico. Os usuários previstos incluem operador, analista documental, inspetor, responsável técnico, gestor e administrador.
-
-## DDD
-
-O agregado central é `CargaQuimica`, responsável por controlar consistência entre produto, quantidade, documentos, inspeção, status e histórico. `ProdutoQuimico` pertence a um catálogo independente. Objetos de valor como `QuantidadePositiva` e `ClassificacaoRisco` evitam valores inválidos.
-
-## Regras e transições
-
-Uma carga precisa de produto ativo, classe de risco, quantidade positiva e responsável técnico. Para liberar, é necessário atender à política documental e às inspeções aplicáveis. Estados como `BLOQUEADA` e `CANCELADA` impedem movimentação ou liberação indevida. A máquina de estados formaliza as transições.
-
-## Arquitetura e qualidade
-
-Propomos monólito modular com apresentação, aplicação, domínio e infraestrutura. O domínio não conhece HTTP ou SQL. TypeScript ajuda a modelar contratos e estados. Testes unitários e de aplicação verificariam condições críticas com repositórios simulados, e testes de integração seriam acrescentados em fases futuras.
-
-## Próximas fases
-
-O plano prevê núcleo TypeScript, backend, banco, frontend, autenticação, auditoria e, separadamente, uma integração industrial opcional. As políticas legais e operacionais reais exigem levantamento com profissionais habilitados.
+**Ponto importante de autoria:** qualquer afirmação no vídeo sobre o que “eu desenvolvi” deve corresponder ao que você consegue reproduzir e justificar. Não diga que entrevistou operador, implementou sistema em porto ou mediu resultados; isso não ocorreu.
