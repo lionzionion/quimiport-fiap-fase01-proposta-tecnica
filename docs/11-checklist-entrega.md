@@ -1,30 +1,39 @@
-# 11 — Checklist da Fase 01
+# 11 — Checklist de conformidade com a Fase 01
 
-| Requisito do PDF | Artefato | Situação |
+Fonte de verificação: **PDF 10FSDT - Tech Challenge - Fase 1** fornecido pelo estudante. Esta lista não substitui informações posteriores do portal da turma.
+
+| Requisito | Referência no material | Situação |
 |---|---|---|
-| Contexto, usuários, processos, riscos | [Domínio](01-contexto-e-domínio.md) | Documentado, revisar autoria |
-| Entidades, VOs, agregados e linguagem | [DDD](02-ddd.md) | Documentado |
-| Casos de uso com ator, entrada, saída, regras, erros | [Casos de uso](03-casos-de-uso.md) | 11 casos documentados |
-| Regras e localização na arquitetura | [Regras](04-regras-de-negocio.md) | 16 regras propostas |
-| Arquitetura e organização de pastas | [Arquitetura](05-arquitetura.md) | Documentado |
-| Diagrama obrigatório de domínio | [Mermaid](../diagramas/dominio.mmd) | Presente |
-| Diagrama obrigatório de status | [Mermaid](../diagramas/status.mmd) | Presente |
-| Qualidade e mocks | [Plano de qualidade](07-plano-de-qualidade.md) | Documentado |
-| TypeScript e JavaScript | [Técnica](08-javascript-typescript.md) | Documentado |
-| Decisões e roadmap | [ADRs](09-decisoes-e-roadmap.md) | Documentado |
-| README e repositório Git | [README](../README.md) | Publicado |
-| Vídeo de 5 a 10 minutos | [Roteiro](10-roteiro-video.md) | **Pendente gravação** |
-| Entrega individual | Coordenação FIAP | **Confirmação pendente** |
-| Data/procedimento de envio | Portal FIAP | **Confirmação pendente** |
+| Contexto portuário, problema, usuários e riscos | `01-contexto-e-domínio.md` | Proposta revisada; validação autoral pendente |
+| Linguagem ubíqua, entidades, VOs e agregados | `01-contexto-e-domínio.md`, `02-ddd.md` | Proposta revisada; validação autoral pendente |
+| Casos de uso: ator, entrada, saída, regra e erros | `03-casos-de-uso.md` | 11 casos detalhados; validação autoral pendente |
+| Regras de negócio e onde ficam | `04-regras-de-negocio.md` | Proposta revisada; validação autoral pendente |
+| Arquitetura e organização de pastas | `05-arquitetura.md` | Proposta revisada; validação autoral pendente |
+| **Diagrama de domínio** | `06-diagramas.md` | Fonte e renderização revisadas |
+| **Fluxo de status da carga** | `06-diagramas.md` | Fontes e transições revisadas |
+| Estratégia de qualidade e mocks | `07-plano-de-qualidade.md` | Proposta revisada; validação autoral pendente |
+| Uso planejado de JavaScript e TypeScript | `08-javascript-typescript.md` | Proposta revisada; validação autoral pendente |
+| Decisões arquiteturais e evolução | `09-decisoes-e-roadmap.md` | Proposta revisada; validação autoral pendente |
+| README e link Git do projeto | `README.md` | Publicado; revisar conteúdo autoral |
+| **Vídeo de 5 a 10 minutos** | `10-roteiro-video.md` | Roteiro pronto; vídeo pendente |
+| Confirmação do prazo | Portal FIAP | **Não confirmado** |
+| Confirmação de trabalho individual | Coordenação FIAP | **Não confirmado** |
 
-## Conferência final
+## Revisão antes de entrega
 
-- [ ] Releitura integral e entendimento autoral.
-- [ ] Links internos e diagramas abrindo no GitHub.
-- [ ] Link do repositório acessível ao avaliador.
-- [ ] Confirmação formal da possibilidade de entrega individual.
-- [ ] Vídeo entre 5 e 10 minutos gravado e acessível.
-- [ ] Prazo e formato de submissão confirmados.
-- [ ] Envio realizado e comprovante preservado.
+- [ ] Adequar textos ao vocabulário que você compreende e consegue defender.
+- [ ] Conferir coerência entre regras, casos de uso e estados do diagrama.
+- [ ] Conferir diagramas renderizados (GitHub Mermaid ou ferramenta equivalente).
+- [ ] Registrar autoria, justificativas e versão da proposta.
+- [ ] Publicar no Git e validar o link de acesso.
+- [ ] Gravar e revisar vídeo de 5 a 10 minutos.
+- [ ] Confirmar aceitação de submissão individual.
+- [ ] Confirmar prazo e procedimento do portal.
 
-O sistema industrial executável foi mantido separado desta proposta documental.
+## Revisão de autenticidade e rastreabilidade
+
+- [ ] Ler [as fontes oficiais](17-fontes-e-evidencias.md) e distinguir fatos de hipóteses de produto.
+- [ ] Reproduzir [os dois diagramas](18-como-construi-os-diagramas.md) antes de afirmar que compreende sua construção.
+- [ ] Exercitar [o estudo de caso fictício](16-estudo-de-caso.md) e justificar RN07, RN08 e RN11.
+- [ ] Preencher [o caderno de elaboração](20-caderno-de-elaboracao.md) com ações **realmente executadas**, sem inventar entrevista.
+- [ ] Gravar o vídeo conforme o [roteiro do caso real](../apresentacao/GUIA_VIDEO_CASO_REAL.md).

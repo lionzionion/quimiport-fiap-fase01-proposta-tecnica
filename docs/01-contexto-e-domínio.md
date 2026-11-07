@@ -1,62 +1,71 @@
-# 01 — Entendimento do domínio e contexto portuário
+# 01 — Entendimento do domínio e contexto
 
 ## Situação-problema
 
-O QuimiPort é uma **proposta acadêmica** de gestão de cargas químicas em um terminal portuário fictício, inspirado no Porto de Santos. Atualmente, informações de identificação de produto, classificação de risco, documentação, inspeções e autorizações podem estar dispersas. Isso dificulta saber quem tomou uma decisão, com base em quais evidências e em qual momento.
+**Recorte investigado:** pré-conferência documental e rastreabilidade de pendências antes da movimentação de uma carga perigosa. A operação portuária real possui processos oficiais — como o Porto Sem Papel — que **não serão substituídos**. [Levantamento e fontes](17-fontes-e-evidencias.md) · [Caso fictício C-001](16-estudo-de-caso.md).
 
-**Objetivo:** centralizar o registro das cargas e definir regras verificáveis de análise, bloqueio, liberação e rastreabilidade, sem substituir exigências legais ou profissionais habilitados.
 
-## Atores e responsabilidades propostas
+Em um terminal portuário fictício inspirado no Porto de Santos, cargas químicas percorrem processos de cadastro, conferência documental, inspeção e decisão de movimentação. O controle descentralizado dificulta responder: *qual é o produto? qual o risco declarado? quem é o responsável? existem pendências? quem autorizou ou bloqueou?*
 
-| Perfil | Responsabilidade |
+O QuimiPort propõe um registro único da **carga química** e de suas mudanças de estado, com regras de negócio explícitas que impeçam movimentos contraditórios. A decisão final, em operação real, dependeria de validações legais, ambientais, de segurança e de pessoas habilitadas; essas verificações **não** estão aqui implementadas nem presumidas.
+
+## Perfis de usuários propostos
+
+| Perfil | Responsabilidade no sistema proposto |
 |---|---|
-| Operador portuário | Cadastrar carga, consultar situação e solicitar avanço operacional |
-| Analista documental | Conferir as exigências documentais da operação e registrar pendências |
-| Inspetor / analista de qualidade | Solicitar e registrar parecer de inspeções |
-| Responsável técnico | Vincular responsabilidade e acompanhar restrições técnicas |
-| Gestor operacional | Decidir bloqueios, analisar exceções e acompanhar indicadores |
-| Administrador | Gerenciar papéis, usuários e parâmetros em fase posterior |
+| Operador portuário | Cadastrar cargas e acompanhar status |
+| Analista documental | Registrar e validar referências documentais |
+| Analista de qualidade / inspetor | Solicitar ou emitir parecer de inspeção |
+| Responsável técnico | Ser associado à carga e acompanhar restrições técnicas |
+| Gestor operacional | Revisar bloqueios, acompanhar indicadores e decisões |
+| Administrador | Gerenciar usuários, perfis e parâmetros futuramente |
 
-Os papéis são **previstos**, não permissões implementadas.
+Na Fase 01, **descrevemos** permissões previstas; não há necessidade de implementá-las.
 
-## Informações a controlar
+## Informações controladas
 
-Produto químico (identificação, nome, classificação de risco, ativo/inativo); carga (código, produto associado, quantidade e unidade, responsável e status); referências documentais e seus resultados; inspeções; decisões de liberação/bloqueio; motivos e histórico temporal.
+Produto químico (código, nome, classe de risco, ativo), carga (código, produto, quantidade/unidade, responsável, situação), documentos exigidos e validados, inspeções e pareceres, motivos de bloqueio, eventos de histórico e data/hora de cada decisão.
 
 ## Linguagem ubíqua
 
-| Termo | Definição |
+| Termo | Definição usada em documentação e código futuro |
 |---|---|
-| Produto químico | Item identificado e classificado em catálogo |
-| Carga química | Unidade operacional rastreável, vinculada a um produto |
-| Documento obrigatório | Documento requerido por política aplicável à operação |
-| Inspeção | Verificação formal com responsável, data e parecer |
-| Pendência documental | Condição não atendida que impede liberação |
-| Bloqueio | Restrição explícita com motivo registrado |
-| Liberação | Decisão autorizada após verificações previstas |
-| Movimentação | Ação operacional posterior à liberação |
-| Histórico | Sequência de eventos de criação, decisões e transições |
-| Agregado | Fronteira de consistência que protege invariantes de negócio |
+| Produto químico | Item do catálogo identificado e classificado quanto ao risco |
+| Carga química | Unidade de controle operacional com produto, quantidade e status |
+| Documento obrigatório | Exigência documental associada à política de validação da carga |
+| Inspeção | Verificação registrada por analista autorizado, com parecer |
+| Bloqueio | Restrição que impede a liberação/movimentação |
+| Liberação | Decisão explícita de que condições **definidas pela política** foram atendidas |
+| Movimentação | Etapa operacional posterior à liberação |
+| Histórico | Registro temporal de ações e transições de status |
+| Agregado | Conjunto de entidades protegido por invariantes transacionais |
 
-## Jornada operacional proposta
+## Decisões e riscos
 
-1. Cadastrar produto identificado, classificado e ativo.
-2. Registrar carga com produto, quantidade positiva e responsável.
-3. Identificar política documental aplicável e avaliar documentos.
-4. Solicitar inspeção quando prevista; registrar parecer.
-5. Decidir por liberação ou bloqueio com justificativa e autoria.
-6. Iniciar movimentação **apenas após liberação** e registrar encerramento e histórico.
+- Não cadastrar carga sem produto associado ativo, classe de risco, quantidade positiva e responsável técnico.
+- Não liberar carga com documentação pendente, situação bloqueada ou cancelada.
+- Registrar autor, momento e justificativa das decisões; em produção, exigir identidade autenticada.
+- Não supor que uma lista didática de documentos represente obrigações legais universais.
+- Evitar uma classe de risco textual livre em produção; versionar catálogos e políticas aplicáveis.
 
-**Cenário fictício:** a carga `CQ-2026-001` permanece `EM_ANALISE` porque um documento obrigatório não foi validado; `LiberarCarga` devolve a pendência. A ausência não implica automaticamente bloqueio formal. Somente um ator autorizado, diante de ocorrência crítica, gera `BLOQUEADA` com motivo.
+## Evolução
 
-## Riscos, limitações e hipóteses
+O núcleo de cargas portuárias permanece separado de módulos futuros: fábrica, armazenamento industrial, estoque por lote, ordens de consumo, integrações externas e monitoramento de operações.
 
-- Exigências documentais reais dependem da operação, substância e legislação vigente; o PDF não define catálogo regulatório.
-- A classificação de risco deve evoluir para referência versionada e validada.
-- Em uso real, autenticação, autorização, segurança, auditoria, concorrência e especialistas são indispensáveis.
-- Não há autorização legal ou operacional automática somente porque um atributo `valido` é verdadeiro.
-- Armazenagem e estoque da fábrica são **extensões futuras fora do núcleo da Fase 01**.
+## Jornada portuária planejada (cenário fictício)
 
-## Próximas fases
+1. **Cadastro do produto:** catálogo registra identificação, classe de risco declarada e situação ativa/inativa.
+2. **Registro da carga:** operador informa produto, quantidade/unidade e responsável técnico.
+3. **Análise documental:** analista consulta política documental aplicável e registra referência e situação de cada documento exigido.
+4. **Inspeção:** o setor de qualidade registra solicitação e parecer; ocorrência crítica leva a bloqueio.
+5. **Decisão:** responsável autorizado libera a carga somente quando as validações planejadas forem satisfeitas.
+6. **Movimentação e encerramento:** status é atualizado por transições válidas, com histórico da operação.
 
-Implementar persistência, API, interface, autenticação, integração documental, consultas operacionais e, somente como módulo separado, recebimento industrial e rastreabilidade de lotes.
+**Exemplo:** a carga fictícia `CQ-2026-001`, vinculada a um produto classificado, fica em `EM_ANALISE` enquanto faltar um documento exigido pela política de demonstração; a tentativa de `LIBERAR` é recusada e gera resultado de validação. A lista real de documentos, classes de risco e responsáveis habilitados será definida com especialistas e legislação pertinente em fase futura.
+
+## Limites e premissas
+
+- Operações, códigos, produtos e pessoas apresentados nos exemplos são fictícios.
+- O sistema *planejado* não substitui licenças, procedimentos de segurança ou autorização de profissionais competentes.
+- O enunciado define o **contexto portuário**. Controle de fábrica, estoque por lote e integração com ERP pertencem ao roadmap opcional.
+- A decisão operacional de segurança não será automatizada apenas por uma flag `valido`; para uso real exigirá critérios e políticas verificáveis.

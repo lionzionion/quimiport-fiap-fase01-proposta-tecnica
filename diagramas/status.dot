@@ -1,0 +1,20 @@
+digraph G {
+ graph [rankdir=LR, bgcolor="white", pad="0.4", nodesep="0.42", ranksep="0.75", fontname="DejaVu Sans", fontsize=14, splines=true];
+ node [shape=box,style="rounded,filled",fontname="DejaVu Sans",fontsize=13,margin="0.18,0.12",color="#234058",fillcolor="#eef5ff",fontcolor="#172d45"];
+ edge [color="#647e99",fontname="DejaVu Sans",fontsize=10,arrowsize=0.75];
+ REGISTRADA [fillcolor="#e6f0ff"]; EM_ANALISE [fillcolor="#eaf7ff"]; EM_INSPECAO [fillcolor="#fff2d8"]; LIBERADA [fillcolor="#d9f8ed"]; EM_MOVIMENTACAO [fillcolor="#d9f8ed"]; FINALIZADA [fillcolor="#d9f8ed"]; BLOQUEADA [fillcolor="#ffe7e7",color="#d45160"]; CANCELADA [fillcolor="#f1edf3",color="#8a7991"];
+ REGISTRADA->EM_ANALISE [label="análise documental"];
+ EM_ANALISE->EM_INSPECAO [label="solicitar inspeção"];
+ EM_INSPECAO->EM_ANALISE [label="parecer favorável",color="#269a91"];
+ EM_INSPECAO->BLOQUEADA [label="parecer desfavorável",color="#d45160"];
+ EM_ANALISE->LIBERADA [label="requisitos aprovados",color="#269a91"];
+ LIBERADA->EM_MOVIMENTACAO [label="iniciar"];
+ EM_MOVIMENTACAO->FINALIZADA [label="concluir"];
+ REGISTRADA->BLOQUEADA [color="#d45160"];
+ EM_ANALISE->BLOQUEADA [color="#d45160",label="motivo crítico"];
+ LIBERADA->BLOQUEADA [color="#d45160"];
+ BLOQUEADA->EM_ANALISE [label="reabrir com motivo",color="#b58c26"];
+ REGISTRADA->CANCELADA [color="#8a7991"];
+ EM_ANALISE->CANCELADA [color="#8a7991"];
+ BLOQUEADA->CANCELADA [color="#8a7991"];
+}

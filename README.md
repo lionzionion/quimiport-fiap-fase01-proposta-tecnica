@@ -1,83 +1,66 @@
-# QuimiPort | FIAP Pós-Tech — Tech Challenge, Fase 01
+# QuimiPort — pré-conferência de cargas perigosas em operações portuárias
 
-**Proposta técnica e arquitetural para o gerenciamento de cargas químicas em contexto portuário**, inspirado nas operações logísticas do Porto de Santos.
+**Tech Challenge · Pós-Tech Full Stack Development · FIAP · Fase 01**  
+**Estudante:** Leandro Dias · **Contexto de estudo:** operações portuárias inspiradas no Porto de Santos
 
-**Autor da proposta:** Leandro Dias  
-**Curso:** Pós-Tech Full Stack Development — FIAP  
-**Disciplinas:** JavaScript Avançado · Arquitetura de Software com TypeScript · Domain-Driven Design · Qualidade de Software  
-**Natureza:** projeto acadêmico conceitual — **não é software homologado para operações reais**.
+> **Pergunta do projeto:** antes de liberar uma carga perigosa para movimentação, como reunir evidências da conferência documental, identificar pendências e deixar rastreável quem tomou cada decisão?
 
-> **Escopo da Fase 01:** o enunciado solicita documentação técnica, modelagem do domínio, casos de uso, regras, arquitetura, diagramas, plano de qualidade, decisões de JavaScript/TypeScript, **link de repositório Git** e **vídeo de 5 a 10 minutos**. Não exige frontend, backend ou banco de dados funcionando nesta etapa.
+A ideia é resolver **um problema operacional delimitado**: a conferência interna de requisitos e o acompanhamento de pendências de uma carga perigosa. O QuimiPort **não pretende substituir o Porto Sem Papel**, emitir licenças, homologar procedimentos de segurança ou automatizar a autorização legal. Nesta fase, o resultado é **um projeto técnico e arquitetural**, conforme o enunciado. Não é um software pronto para uso real.
 
-## O problema
+## Por que esse problema merece estudo?
 
-O acompanhamento descentralizado de produtos, classificações de risco, documentação, inspeções e autorizações pode dificultar a rastreabilidade das decisões sobre cargas químicas. O **QuimiPort** propõe centralizar esses dados e definir regras consistentes para que uma carga seja registrada, analisada, liberada, bloqueada ou cancelada conforme condições documentadas.
+O serviço federal **Porto Sem Papel** descreve uma Declaração de Carga Perigosa, enquanto o **Porto de Santos** publica normas próprias para movimentação de mercadorias classificadas pelo IMDG. Isso demonstra a existência de exigências e atores distintos. **Nossa hipótese**, ainda sem entrevistas com operadores, é que uma visão unificada das pendências internas e do histórico de decisão pode reduzir retrabalho e ambiguidades de acompanhamento. Não afirmamos ter medido esse problema no porto.
 
-**Cenário de exemplo:** uma carga apresenta documentação obrigatória pendente. A proposta mantém a carga em análise e impede sua liberação, registrando o motivo e o responsável pela decisão. Os requisitos e controles regulatórios reais devem ser definidos e validados com especialistas antes de qualquer uso operacional.
+**Fontes primárias consultadas:** [Porto de Santos — normas e regulamentos](https://www.portodesantos.com.br/informacoes-operacionais/normas-e-regulamentos/), [Serviço Porto Sem Papel](https://www.gov.br/pt-br/servicos/obter-autorizacao-para-movimentacao-de-cargas-perigosas-no-porto-sem-papel-psp?id=12324&origem=servico), [ANTAQ — cargas perigosas](https://www.gov.br/antaq/pt-br/assuntos/sustentabilidade/cargas-perigosas-1) e [IMO — IMDG Code](https://www.imo.org/en/publications/pages/imdg%20code.aspx). Veja [o que cada fonte sustenta — e o que ela não sustenta](docs/17-fontes-e-evidencias.md).
 
-## Modelagem visual — dois diagramas obrigatórios
+## Um caso para testar o raciocínio
 
-**Domínio, entidades e agregados**  
-[Ver diagrama](diagramas/dominio.svg) · [SVG ampliável](diagramas/dominio.svg) · [Fonte Mermaid](diagramas/dominio.mmd)
+Um operador registra a carga **CQ-2026-001** (dados fictícios). A conferência interna identifica uma referência documental pendente. A carga permanece **EM_ANALISE** e a tentativa de liberação é rejeitada. O analista registra a pendência; após regularização e validação pela autoridade competente na operação, um responsável habilitado poderia analisar uma nova solicitação de liberação.
 
-![Diagrama conceitual de domínio do QuimiPort](diagramas/dominio.svg)
+**Essa sequência é uma proposta de fluxo de software**, não a descrição de um caso real do Porto de Santos. [Veja a ficha do caso, alternativas e critérios de aceite](docs/16-estudo-de-caso.md).
 
-**Máquina de estados da carga**  
-[Ver diagrama](diagramas/status.svg) · [SVG ampliável](diagramas/status.svg) · [Fonte Mermaid](diagramas/status.mmd)
+## Como a solução foi pensada — sem esconder as decisões
 
-![Fluxo de estados de uma carga química](diagramas/status.svg)
+| Pergunta | Escolha inicial | Por quê? | Onde conferir |
+|---|---|---|---|
+| Qual informação governa a liberação? | Agregado `CargaQuimica` | Proteger documentos, inspeção, status e histórico na mesma decisão | [DDD](docs/02-ddd.md) |
+| Por que não liberar apenas com uma flag `valido`? | Política documental por contexto | Documentos exigidos variam conforme a operação | [Regras](docs/04-regras-de-negocio.md) |
+| Como evitar estados impossíveis? | Máquina de estados explícita | Bloqueada/cancelada não podem seguir normalmente | [Diagrama de status](diagramas/status.mmd) |
+| Por que monólito modular e não microsserviços? | Menos acoplamento operacional inicial | Requisitos ainda estão sendo descobertos | [ADRs](docs/09-decisoes-e-roadmap.md) |
+| Como comprovar o desenho? | Testes planejados e cenários de erro | Fazer as regras poderem ser contestadas e verificadas | [Qualidade](docs/07-plano-de-qualidade.md) |
 
-## Documentação — requisitos da Fase 01
+## Diagramas: fontes editáveis e como foram desenhados
 
-| Ordem | Documento | Conteúdo |
-|---|---|---|
-| 01 | [Entendimento do domínio](docs/01-contexto-e-domínio.md) | Problema, atores, processos, riscos e linguagem ubíqua |
-| 02 | [Modelagem DDD](docs/02-ddd.md) | Entidades, VOs, agregados, atributos, responsabilidades e relações |
-| 03 | [Casos de uso](docs/03-casos-de-uso.md) | 11 casos: objetivo, ator, entrada, saída, regras e erros |
-| 04 | [Regras de negócio](docs/04-regras-de-negocio.md) | RN01–RN16 e responsabilidades arquiteturais |
-| 05 | [Arquitetura e organização](docs/05-arquitetura.md) | Monólito modular, camadas, contratos e pastas |
-| 06 | [Diagramas técnicos](docs/06-diagramas.md) | Domínio e status obrigatórios; arquitetura complementar |
-| 07 | [Planejamento de qualidade](docs/07-plano-de-qualidade.md) | Testes planejados, cenários, mocks e integração futura |
-| 08 | [JavaScript e TypeScript](docs/08-javascript-typescript.md) | Tipos, interfaces, funções puras, módulos, async/await e generics |
-| 09 | [Decisões e roadmap](docs/09-decisoes-e-roadmap.md) | Justificativas arquiteturais e evolução planejada |
-| 10 | [Roteiro de vídeo](docs/10-roteiro-video.md) | Estrutura para apresentação de 5–10 minutos |
-| 11 | [Checklist de entrega](docs/11-checklist-entrega.md) | Verificações antes da submissão |
-| 12 | [Extensão industrial futura](docs/12-extensao-industrial-futura.md) | Evolução opcional, **fora do escopo obrigatório** |
-| 13 | [Como entregar à FIAP](docs/13-como-entregar-na-fiap.md) | Procedimento e pontos a confirmar no portal |
-| 14 | [Texto-base da apresentação](docs/14-fala-apresentacao.md) | Material de ensaio |
-| 15 | [Matriz de aderência ao PDF](docs/15-matriz-de-aderencia-pdf.md) | Correspondência entre enunciado e documentação |
+Os diagramas não são imagens sem origem. Existem **fontes Mermaid** (`.mmd`), adequadas para revisão no [Mermaid Live Editor](https://mermaid.live/), e **fontes Graphviz** (`.dot`) utilizadas para gerar os SVGs ilustrativos.
 
-## Apresentação
+| Artefato | Fonte editável | Imagem ampliável | Explicação do processo |
+|---|---|---|---|
+| Domínio e agregados — obrigatório | [Mermaid](diagramas/dominio.mmd) / [Graphviz](diagramas/dominio.dot) | [SVG](diagramas/dominio.svg) | [Como reproduzir](docs/18-como-construi-os-diagramas.md) |
+| Fluxo de estados — obrigatório | [Mermaid](diagramas/status.mmd) / [Graphviz](diagramas/status.dot) | [SVG](diagramas/status.svg) | [Como reproduzir](docs/18-como-construi-os-diagramas.md) |
+| Arquitetura — complementar | [Mermaid](diagramas/arquitetura.mmd) | [SVG](diagramas/arquitetura.svg) | [Como reproduzir](docs/18-como-construi-os-diagramas.md) |
 
-- [Apresentação em Markdown — 9 blocos, alvo de ~8 minutos](apresentacao/APRESENTACAO.md)
-- [Roteiro de fala por slide](apresentacao/ROTEIRO_FALA_8_MINUTOS.md)
-- [Checklist de gravação do vídeo](apresentacao/PREPARAR_VIDEO.md)
+![Diagrama de domínio do QuimiPort](diagramas/dominio.svg)
 
-**Vídeo:** ainda não gravado. O link será acrescentado após a gravação, de acordo com o método de entrega autorizado pelo portal FIAP.
+![Diagrama de status das cargas](diagramas/status.svg)
 
-## Decisões resumidas
+## Caminho de leitura para o avaliador
 
-- `CargaQuimica` é raiz de agregado, responsável por invariantes de liberação, bloqueio e transição de status. `ProdutoQuimico` é agregado de catálogo independente.
-- **Monólito modular inicial**, com separação entre apresentação, aplicação, domínio e infraestrutura; repositórios são interfaces, não implementações acopladas a banco.
-- Sem documentos obrigatórios aprovados, ou com parecer desfavorável quando aplicável, uma carga **não é liberada** no fluxo conceitual.
-- A classificação de riscos e a política documental aqui são **modelos acadêmicos**, não validação de exigências oficiais para produtos específicos.
-- A integração posterior com o recebimento e o estoque de uma fábrica é uma **proposta de evolução**, não a entrega portuária da Fase 01.
+**Comece aqui:** [Problema investigado](docs/16-estudo-de-caso.md) → [Fontes e evidências](docs/17-fontes-e-evidencias.md) → [Modelagem DDD](docs/02-ddd.md) → [Casos de uso](docs/03-casos-de-uso.md) → [Regras](docs/04-regras-de-negocio.md) → [Diagramas](docs/06-diagramas.md) → [Qualidade](docs/07-plano-de-qualidade.md) → [ADRs](docs/09-decisoes-e-roadmap.md).
 
-## Verificação da documentação
+**Materiais complementares:** [Contexto e atores](docs/01-contexto-e-domínio.md), [Arquitetura e pastas](docs/05-arquitetura.md), [JavaScript/TypeScript](docs/08-javascript-typescript.md), [Passo a passo dos diagramas](docs/18-como-construi-os-diagramas.md), [Plano de validação com profissionais](docs/19-validacao-pendente.md), [Diário de elaboração](docs/20-caderno-de-elaboracao.md), [Roteiro de 8 minutos](apresentacao/GUIA_VIDEO_CASO_REAL.md), [Matriz de aderência ao PDF](docs/15-matriz-de-aderencia-pdf.md), [Checklist final](docs/11-checklist-entrega.md).
 
-Execute opcionalmente (requer Python 3):
+## Estado real do trabalho e uso de IA
+
+- **Concluído na proposta:** pesquisa documental com fontes públicas, definição de cenário fictício, modelagem inicial, diagramas e planejamento de qualidade.
+- **Ainda não realizado:** entrevista com operadores, observação em terminal, homologação regulatória, implantação em porto, medição real de resultados, gravação/submissão do vídeo e confirmação de autorização para entrega individual.
+- **Apoio de IA:** foi utilizado na redação, revisão, estruturação e prototipação dos documentos. As escolhas e justificativas precisam ser estudadas e validadas pelo estudante antes da entrega. [Caderno aberto de elaboração](docs/20-caderno-de-elaboracao.md) — não se apresentam atividades fictícias como pesquisa de campo.
+
+O [aplicativo industrial experimental](docs/12-extensao-industrial-futura.md) fica fora do repositório de entrega desta fase, pois o enunciado pede **a proposta técnica**, não frontend/backend implantados.
+
+## Conferência automática e pendências acadêmicas
 
 ```bash
 python scripts/validar_entrega.py
 ```
 
-A verificação examina estrutura e links internos da documentação e presença dos diagramas; **não equivale a testes funcionais nem a aprovação acadêmica**. Se o GitHub Actions estiver habilitado, a mesma verificação poderá ser executada nos commits.
-
-## Situação da entrega
-
-**A documentação foi publicada neste repositório.** Ainda faltam a revisão e validação autoral, a confirmação de que a FIAP aceita entrega individual, o prazo e procedimento do portal, a **gravação do vídeo de 5 a 10 minutos** e a submissão formal. O PDF e PowerPoint de apresentação foram preparados separadamente para gravação; a versão navegável está no diretório `apresentacao/`.
-
-
-## Link oficial do projeto
-
-https://github.com/lionzionion/quimiport-fiap-fase01-proposta-tecnica
+Essa checagem procura arquivos, diagramas e links quebrados; **não prova autoria ou conformidade normativa**. A entrega exige link de Git e vídeo de 5 a 10 minutos; o prazo e a possibilidade de trabalho individual precisam ser confirmados no portal/coordenação da FIAP.

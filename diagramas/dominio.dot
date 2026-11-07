@@ -1,0 +1,9 @@
+digraph G {
+ graph [rankdir=LR, bgcolor="white", pad="0.35", nodesep="0.48", ranksep="1", fontname="DejaVu Sans", fontsize=16];
+ node [shape=record, fontname="DejaVu Sans", fontsize=12, color="#223757", fontcolor="#111e38", style="rounded,filled", fillcolor="#F7FAFF", penwidth=1.2];
+ edge [color="#61758e", fontname="DejaVu Sans", fontsize=10, arrowsize=0.8];
+ subgraph cluster_catalog {label="Agregado de catálogo"; fontcolor="#243659"; style="rounded,dashed"; color="#8da6c0"; Produto [label="{ProdutoQuimico | id, codigo, nome, classeRisco, ativo | inativar()}";fillcolor="#E6F0FF"]; ClassR [label="{«VO» ClassificacaoRisco | codigo}";fillcolor="#F0F4FB"]; Produto->ClassR [label="usa", arrowhead=vee];}
+ subgraph cluster_carga {label="Agregado CargaQuimica";fontcolor="#173951"; style="rounded,dashed"; color="#21a8ab"; Carga [label="{«Raiz» CargaQuimica | id, produtoId, quantidade, responsavelId, status | registrar(), liberar(), bloquear()}"; fillcolor="#DFF9F4",penwidth=2]; Documento [label="{DocumentoCarga | id, tipo, referencia, situacao}";fillcolor="#F6FBFF"]; Inspecao [label="{Inspecao | id, parecer, status}";fillcolor="#F6FBFF"]; Evento [label="{EventoHistorico | id, autor, instante, acao}";fillcolor="#F6FBFF"]; Qtd [label="{«VO» QuantidadePositiva | valor, unidade}";fillcolor="#F0F4FB"]; Carga->Documento [label="contém 0..N",arrowhead=diamond]; Carga->Inspecao [label="contém 0..N",arrowhead=diamond]; Carga->Evento [label="contém 1..N",arrowhead=diamond]; Carga->Qtd [label="usa", style=dashed]; }
+ Responsavel [label="{ResponsavelTecnico | id, nome, registroProfissional}";fillcolor="#E6F0FF"];
+ Produto->Carga [label="referência 1 produto",dir=back,color="#4166a4",minlen=2]; Carga->Responsavel [label="referência 1 responsável",color="#4166a4"];
+}
