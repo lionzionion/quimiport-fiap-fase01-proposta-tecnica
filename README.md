@@ -49,8 +49,7 @@ O acompanhamento descentralizado de produtos, classificações de risco, documen
 
 ## Apresentação
 
-- [Slides em PDF — 11 telas, alvo de ~8 minutos](apresentacao/QuimiPort_Fase01_Slides.pdf)
-- [PowerPoint editável](apresentacao/QuimiPort_Fase01_Slides_Editavel.pptx)
+- [Apresentação em Markdown — 9 blocos, alvo de ~8 minutos](apresentacao/APRESENTACAO.md)
 - [Roteiro de fala por slide](apresentacao/ROTEIRO_FALA_8_MINUTOS.md)
 - [Checklist de gravação do vídeo](apresentacao/PREPARAR_VIDEO.md)
 
@@ -76,7 +75,8 @@ A verificação examina estrutura e links internos da documentação e presença
 
 ## Situação da entrega
 
-Documentos e slides: **preparados para revisão autoral**. Repositório publicado. Permanecem pendentes a confirmação da entrega individual pela FIAP, a verificação do prazo e do procedimento no portal, a gravação do vídeo de 5–10 minutos e a submissão formal.
+**A documentação foi publicada neste repositório.** Ainda faltam a revisão e validação autoral, a confirmação de que a FIAP aceita entrega individual, o prazo e procedimento do portal, a **gravação do vídeo de 5 a 10 minutos** e a submissão formal. O PDF e PowerPoint de apresentação foram preparados separadamente para gravação; a versão navegável está no diretório `apresentacao/`.
+
 
 ## Link oficial do projeto
 
