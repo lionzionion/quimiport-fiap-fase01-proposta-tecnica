@@ -1,0 +1,6 @@
+flowchart TD
+  UI[Apresentação Web] --> HTTP[Controladores HTTP]
+  HTTP --> APP[Aplicação: casos de uso]
+  APP --> DOM[Domínio: entidades e regras]
+  APP --> PORT[Interfaces de repositório]
+  INF[Infraestrutura: banco e integrações] -. implementa .-> PORT

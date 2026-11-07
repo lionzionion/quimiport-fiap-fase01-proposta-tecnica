@@ -1,0 +1,18 @@
+stateDiagram-v2
+  [*] --> REGISTRADA
+  REGISTRADA --> EM_ANALISE: iniciar análise
+  EM_ANALISE --> EM_INSPECAO: solicitar inspeção
+  EM_INSPECAO --> EM_ANALISE: parecer favorável
+  EM_INSPECAO --> BLOQUEADA: parecer desfavorável
+  EM_ANALISE --> LIBERADA: documentos e regras aprovados
+  LIBERADA --> EM_MOVIMENTACAO: iniciar movimentação
+  EM_MOVIMENTACAO --> FINALIZADA: concluir operação
+  REGISTRADA --> BLOQUEADA: motivo técnico
+  EM_ANALISE --> BLOQUEADA: pendência crítica
+  LIBERADA --> BLOQUEADA: nova ocorrência
+  BLOQUEADA --> EM_ANALISE: reabrir com justificativa
+  REGISTRADA --> CANCELADA: cancelar
+  EM_ANALISE --> CANCELADA: cancelar
+  BLOQUEADA --> CANCELADA: cancelar
+  FINALIZADA --> [*]
+  CANCELADA --> [*]

@@ -1,0 +1,38 @@
+classDiagram
+  direction LR
+  class ProdutoQuimico {
+    <<AgregadoCatalogo>>
+    +id: UUID
+    +nome: String
+    +classeRisco: String
+    +ativo: Boolean
+  }
+  class CargaQuimica {
+    <<RaizDeAgregado>>
+    +id: UUID
+    +produtoId: UUID
+    +quantidade: Decimal
+    +status: StatusCarga
+    +liberar()
+    +bloquear()
+  }
+  class DocumentoCarga {
+    +tipo: String
+    +situacao: String
+  }
+  class Inspecao {
+    +parecer: String
+  }
+  class EventoHistorico {
+    +dataHora: DateTime
+    +tipo: String
+  }
+  class ResponsavelTecnico {
+    +nome: String
+    +registro: String
+  }
+  ProdutoQuimico "1" <-- "0..*" CargaQuimica
+  CargaQuimica "1" *-- "0..*" DocumentoCarga
+  CargaQuimica "1" *-- "0..*" Inspecao
+  CargaQuimica "1" *-- "1..*" EventoHistorico
+  CargaQuimica "0..*" --> "1" ResponsavelTecnico
